@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "dependencies": {
+    "sqlite3": "^5.1.7",
+    "ws": "^8.18.3",
+    "express": "^5.1.0",
+    "cors": "^2.8.5",
+    "chokidar": "^4.0.3",
+    "geoip-lite": "^1.4.10",
+    "dotenv": "^17.2.1"
+  }
+}
