@@ -1,50 +1,30 @@
-import { useState, useEffect, useRef } from 'react';
+// src/hooks/useWebSocket.ts
+import { useEffect, useMemo, useRef, useState } from "react";
 
-interface WebSocketMessage {
-  type: string;
-  data: any;
-  timestamp: string;
-}
-
-export function useWebSocket(url: string) {
-  const [isConnected, setIsConnected] = useState(false);
-  const [lastMessage, setLastMessage] = useState<WebSocketMessage | null>(null);
+export function useWebSocket(customUrl?: string) {
   const ws = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastMessage, setLastMessage] = useState<any>(null);
+
+  const url = useMemo(() => {
+    if (customUrl) return customUrl;
+    const proto = window.location.protocol === "https:" ? "wss" : "ws";
+    return `${proto}://${window.location.host}/ws`;
+  }, [customUrl]);
 
   const connect = () => {
     try {
       ws.current = new WebSocket(url);
-      
-      ws.current.onopen = () => {
-        console.log('WebSocket connected');
-        setIsConnected(true);
-      };
-      
-      ws.current.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          setLastMessage(message);
-        } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
-        }
-      };
-      
+      ws.current.onopen = () => setIsConnected(true);
+      ws.current.onmessage = (e) => setLastMessage(JSON.parse(e.data));
       ws.current.onclose = () => {
-        console.log('WebSocket disconnected');
         setIsConnected(false);
-        
-        // Reconnect after 3 seconds
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, 3000);
+        reconnectTimeoutRef.current = setTimeout(connect, 3000);
       };
-      
-      ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-      };
+      ws.current.onerror = (err) => console.error("WS error:", err);
     } catch (error) {
-      console.error('Failed to connect to WebSocket:', error);
+      console.error("Failed to connect to WebSocket:", error);
     }
   };
 
@@ -56,14 +36,9 @@ export function useWebSocket(url: string) {
 
   useEffect(() => {
     connect();
-    
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
-      if (ws.current) {
-        ws.current.close();
-      }
+      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
+      ws.current?.close();
     };
   }, [url]);
 

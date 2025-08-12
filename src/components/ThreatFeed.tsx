@@ -5,7 +5,7 @@ import { api } from '../services/api';
 
 export function ThreatFeed() {
   const [threats, setThreats] = useState<any[]>([]);
-  const { lastMessage } = useWebSocket('ws://localhost:8080');
+  const { lastMessage } = useWebSocket();
 
   useEffect(() => {
     // Load initial attack data

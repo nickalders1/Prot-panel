@@ -3,7 +3,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 
 export function NetworkMap() {
   const [connections, setConnections] = useState<any[]>([]);
-  const { lastMessage } = useWebSocket('ws://localhost:8080');
+  const { lastMessage } = useWebSocket();
 
   useEffect(() => {
     // Initialize with empty connections

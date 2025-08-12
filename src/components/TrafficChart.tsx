@@ -3,7 +3,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 
 export function TrafficChart() {
   const [data, setData] = useState<any[]>([]);
-  const { lastMessage } = useWebSocket('ws://localhost:8080');
+  const { lastMessage } = useWebSocket();
 
   useEffect(() => {
     // Initialize with empty data
@@ -40,7 +40,7 @@ export function TrafficChart() {
   useEffect(() => {
     const fetchTrafficData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/traffic?hours=1');
+        const response = await fetch('/api/traffic?hours=1');
         if (response.ok) {
           const trafficData = await response.json();
           if (trafficData.length > 0) {

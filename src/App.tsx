@@ -18,7 +18,7 @@ function App() {
     serverLoad: '0%'
   });
   const [isConnected, setIsConnected] = useState(false);
-  const { lastMessage, isConnected: wsConnected } = useWebSocket('ws://localhost:8080');
+  const { lastMessage, isConnected: wsConnected } = useWebSocket();
 
   useEffect(() => {
     const timer = setInterval(() => {

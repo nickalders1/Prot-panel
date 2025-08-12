@@ -2,7 +2,7 @@ import { WebSocketServer as WSS, WebSocket } from "ws";
 
 class WebSocketService {
   constructor(port = 8080) {
-    this.wss = new WSS({ port });
+    this.wss = new WSS({ port: 8080, path: '/ws' });
     this.clients = new Set();
 
     this.wss.on("connection", (ws) => {
